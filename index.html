@@ -65,7 +65,6 @@
       100% { opacity: 1; transform: scale(1.02); }
     }
 
-    /* Card Profile */
     .card {
       position: relative;
       z-index: 2;
@@ -80,11 +79,10 @@
       text-align: center;
     }
 
-    /* Avatar, Frame & Status Container */
     .avatar-wrapper {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       margin: 0 auto 16px;
       display: flex;
       align-items: center;
@@ -92,17 +90,16 @@
     }
 
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: 84px;
+      height: 84px;
       border-radius: 50%;
       object-fit: cover;
     }
 
-    /* Frame Avatar Discord */
     .avatar-decoration {
       position: absolute;
-      top: -10px;
-      left: -10px;
+      top: -5px;
+      left: -5px;
       width: 120px;
       height: 120px;
       pointer-events: none;
@@ -111,7 +108,7 @@
 
     .status-dot {
       position: absolute;
-      bottom: 6px; right: 6px;
+      bottom: 10px; right: 10px;
       width: 18px; height: 18px;
       background-color: #80848e;
       border: 3.5px solid #121216;
@@ -124,30 +121,10 @@
     .status-dot.dnd { background-color: #f23f43; }
     .status-dot.offline { background-color: #80848e; }
 
-    /* Name & Badges Container */
-    .name-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
     .display-name {
       font-size: 1.5rem;
       font-weight: 700;
       color: #fff;
-    }
-
-    /* Discord Badges */
-    .badges-container {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .badge-icon {
-      width: 18px;
-      height: 18px;
     }
 
     .username {
@@ -157,7 +134,6 @@
       margin-bottom: 20px;
     }
 
-    /* Music Player */
     .music-box {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.05);
@@ -224,18 +200,13 @@
 
   <div class="card">
     <div class="avatar-wrapper">
-      <img id="discord-avatar" src="https://i.imgur.com/8Km9tLL.png" class="avatar">
-      <!-- Frame Decoration -->
+      <img id="discord-avatar" src="" class="avatar" style="display: none;">
       <img id="discord-frame" class="avatar-decoration" style="display: none;">
       <div id="discord-status" class="status-dot"></div>
     </div>
 
-    <div class="name-container">
-      <div id="discord-name" class="display-name">ItsVenuz</div>
-      <div id="discord-badges" class="badges-container"></div>
-    </div>
-    
-    <div id="discord-tag" class="username">@itsvenuz</div>
+    <div id="discord-name" class="display-name">...</div>
+    <div id="discord-tag" class="username">@...</div>
 
     <div class="music-box">
       <i class="fas fa-music"></i>
@@ -268,59 +239,58 @@
       audio.play().catch(e => console.log(e));
     });
 
-    async function loadFullDiscordProfile() {
-      try {
-        // Lấy thông tin Lanyard
-        const lanyardRes = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
-        const lanyardData = await lanyardRes.json();
+    // Real-time WebSocket connection to Lanyard
+    function connectLanyard() {
+      const ws = new WebSocket("wss://api.lanyard.rest/socket");
 
-        // Lấy thông tin Discord mở rộng (để lấy Frame & Badges)
-        const userRes = await fetch(`https://dapi.djs.workers.dev/user/${DISCORD_ID}`);
-        const userData = await userRes.json();
+      ws.onopen = () => {
+        ws.send(JSON.stringify({
+          op: 2,
+          d: { subscribe_to_id: DISCORD_ID }
+        }));
+      };
 
-        if (lanyardData.success) {
-          const user = lanyardData.data.discord_user;
-          const status = lanyardData.data.discord_status;
-
-          // 1. Avatar
-          const avatarExt = user.avatar.startsWith("a_") ? "gif" : "png";
-          document.getElementById('discord-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${avatarExt}?size=256`;
-
-          // 2. Avatar Decoration (Frame)
-          if (user.avatar_decoration_data) {
-            const frameHash = user.avatar_decoration_data.asset;
-            const frameImg = document.getElementById('discord-frame');
-            frameImg.src = `https://cdn.discordapp.com/avatar-decorations/${user.id}/${frameHash}.png`;
-            frameImg.style.display = "block";
-          }
-
-          // 3. Status Dot
-          document.getElementById('discord-status').className = `status-dot ${status}`;
-
-          // 4. Name & Username
-          document.getElementById('discord-name').innerText = user.global_name || user.username;
-          document.getElementById('discord-tag').innerText = `@${user.username}`;
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.t === "INIT_STATE" || data.t === "PRESENCE_UPDATE") {
+          updateProfile(data.d);
         }
+      };
 
-        // 5. Badges
-        if (userData && userData.badges) {
-          const badgesContainer = document.getElementById('discord-badges');
-          badgesContainer.innerHTML = '';
-          userData.badges.forEach(badge => {
-            const img = document.createElement('img');
-            img.src = badge.url;
-            img.className = 'badge-icon';
-            img.title = badge.name;
-            badgesContainer.appendChild(img);
-          });
-        }
-
-      } catch (err) {
-        console.error("Lỗi tải thông tin Discord:", err);
-      }
+      ws.onclose = () => setTimeout(connectLanyard, 3000);
     }
 
-    loadFullDiscordProfile();
+    function updateProfile(presence) {
+      const user = presence.discord_user;
+      const status = presence.discord_status;
+
+      // 1. Display Name & Username Tag
+      document.getElementById('discord-name').innerText = user.global_name || user.username;
+      document.getElementById('discord-tag').innerText = `@${user.username}`;
+
+      // 2. Avatar (Animated GIF vs Static PNG)
+      const avatarImg = document.getElementById('discord-avatar');
+      if (user.avatar) {
+        const isGif = user.avatar.startsWith("a_");
+        avatarImg.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${isGif ? 'gif' : 'png'}?size=256`;
+        avatarImg.style.display = "block";
+      }
+
+      // 3. Avatar Decoration (Frame)
+      const frameImg = document.getElementById('discord-frame');
+      if (user.avatar_decoration_data) {
+        const asset = user.avatar_decoration_data.asset;
+        frameImg.src = `https://cdn.discordapp.com/avatar-decorations/${user.id}/${asset}.png`;
+        frameImg.style.display = "block";
+      } else {
+        frameImg.style.display = "none";
+      }
+
+      // 4. Status Dot
+      document.getElementById('discord-status').className = `status-dot ${status}`;
+    }
+
+    connectLanyard();
   </script>
 </body>
 </html>
