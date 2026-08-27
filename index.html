@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bad Apple // Glitch Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-color: #000000;
+      --main-color: #ffffff;
+      --glow-color: #ffffff;
+      --font-mono: 'Courier New', Courier, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--main-color);
+      font-family: var(--font-mono);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Hiệu ứng Màn hình giật / Flicker & Noise */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    /* Canvas Ma trận chữ chạy Hacker ở Background */
+    #matrix {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    /* Khung Profile Glassmorphism Trắng Đen */
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 380px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 2px solid var(--main-color);
+      box-shadow: 0 0 15px var(--glow-color);
+      padding: 30px 20px;
+      text-align: center;
+      animation: card-flicker 0.15s infinite alternate;
+    }
+
+    /* Animation Card Giật nhẹ theo beat */
+    @keyframes card-flicker {
+      0% { transform: translate(0, 0); }
+      98% { transform: translate(0, 0); }
+      99% { transform: translate(-2px, 1px); }
+      100% { transform: translate(1px, -1px); }
+    }
+
+    /* Avatar xé hình Bad Apple */
+    .avatar-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 15px;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      filter: grayscale(100%) contrast(200%);
+      border: 2px solid #fff;
+      box-shadow: 0 0 10px var(--glow-color);
+    }
+
+    /* Text Glitch Effect */
+    .glitch {
+      font-size: 1.8rem;
+      font-weight: bold;
+      position: relative;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--main-color);
+      text-shadow: 0 0 5px var(--glow-color);
+    }
+
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .glitch::before {
+      left: -2px;
+      text-shadow: 2px 0 #ff0055;
+      animation: glitch-anim 2s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      left: 2px;
+      text-shadow: -2px 0 #00f2fe;
+      animation: glitch-anim2 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim {
+      0% { clip: rect(10px, 9999px, 30px, 0); }
+      20% { clip: rect(40px, 9999px, 10px, 0); }
+      40% { clip: rect(25px, 9999px, 50px, 0); }
+      60% { clip: rect(70px, 9999px, 20px, 0); }
+      80% { clip: rect(15px, 9999px, 80px, 0); }
+      100% { clip: rect(50px, 9999px, 5px, 0); }
+    }
+
+    @keyframes glitch-anim2 {
+      0% { clip: rect(60px, 9999px, 10px, 0); }
+      25% { clip: rect(15px, 9999px, 70px, 0); }
+      50% { clip: rect(35px, 9999px, 30px, 0); }
+      75% { clip: rect(80px, 9999px, 5px, 0); }
+      100% { clip: rect(5px, 9999px, 40px, 0); }
+    }
+
+    .user-tag {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 15px;
+    }
+
+    /* Player Nhạc */
+    .player {
+      border: 1px dashed var(--main-color);
+      padding: 15px;
+      margin: 20px 0;
+      background: #000;
+    }
+
+    .song-info {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn {
+      background: none;
+      border: 1px solid var(--main-color);
+      color: var(--main-color);
+      padding: 5px 15px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--main-color);
+      color: #000;
+      box-shadow: 0 0 10px var(--glow-color);
+    }
+
+    /* Social Links Grid */
+    .socials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .social-btn {
+      border: 1px solid var(--main-color);
+      color: var(--main-color);
+      padding: 10px;
+      text-decoration: none;
+      font-size: 1.2rem;
+      transition: 0.2s;
+    }
+
+    .social-btn:hover {
+      background: var(--main-color);
+      color: #000;
+      box-shadow: 0 0 10px var(--glow-color);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix"></canvas>
+
+  <div class="card">
+    <div class="avatar-container">
+      <img src="https://i.imgur.com/8Km9tLL.png" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="glitch" data-text="SYSTEM_FAILURE">SYSTEM_FAILURE</div>
+    <div class="user-tag">@admin_root_access</div>
+
+    <div class="player">
+      <div class="song-info">
+        > <span id="title">BAD_APPLE.MP3</span>
+      </div>
+      <div class="controls">
+        <button class="btn" id="prev"><<</button>
+        <button class="btn" id="play">[PLAY]</button>
+        <button class="btn" id="next">>></button>
+      </div>
+      <audio id="audio" src=""></audio>
+    </div>
+
+    <div class="socials">
+      <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+      <a href="https://facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook"></i></a>
+      <a href="https://zalo.me" target="_blank" class="social-btn"><i class="fas fa-comment"></i></a>
+      <a href="https://discord.com" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
+      <a href="https://t.me" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a>
+      <a href="https://github.com" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
+    </div>
+  </div>
+
+  <script>
+    // 1. Matrix Code Rain Effect Background
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "01010101BADAPPLEGLITCHHACKERROR";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 33);
+
+    // 2. Music Player & Changing Glowing Mood
+    const songs = [
+      { title: "BAD_APPLE_REMIX.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", color: "#ffffff" },
+      { title: "CYBERPUNK_BEAT.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", color: "#00ff66" },
+      { title: "HACKER_SYSTEM.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", color: "#ff0055" }
+    ];
+
+    let songIndex = 0;
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const title = document.getElementById('title');
+
+    function loadSong(song) {
+      title.innerText = song.title;
+      audio.src = song.src;
+      // Đổi tông màu Glow khi đổi nhạc
+      document.documentElement.style.setProperty('--glow-color', song.color);
+      document.documentElement.style.setProperty('--main-color', song.color);
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "[PAUSE]";
+      } else {
+        audio.pause();
+        playBtn.innerText = "[PLAY]";
+      }
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+    prevBtn.addEventListener('click', () => {
+      songIndex = (songIndex - 1 + songs.length) % songs.length;
+      loadSong(songs[songIndex]);
+      audio.play();
+      playBtn.innerText = "[PAUSE]";
+    });
+    nextBtn.addEventListener('click', () => {
+      songIndex = (songIndex + 1) % songs.length;
+      loadSong(songs[songIndex]);
+      audio.play();
+      playBtn.innerText = "[PAUSE]";
+    });
+
+    loadSong(songs[songIndex]);
+  </script>
+</body>
+</html>
