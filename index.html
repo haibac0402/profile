@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bad Apple // Glitch Profile</title>
+  <title>Bad Apple // Discord Profile</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -31,18 +31,52 @@
       position: relative;
     }
 
-    /* Hiệu ứng Màn hình giật / Flicker & Noise */
+    /* Hiệu ứng Màn hình CRT TV Scanline */
     body::before {
       content: "";
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
       background-size: 100% 3px, 6px 100%;
       pointer-events: none;
       z-index: 10;
     }
 
-    /* Canvas Ma trận chữ chạy Hacker ở Background */
+    /* 1. MÀN HÌNH MỜ ĐẦU (CLICK TO ENTER) */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 99;
+      cursor: pointer;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .enter-text {
+      font-size: 1.2rem;
+      letter-spacing: 3px;
+      animation: pulse 1.5s infinite alternate;
+      text-transform: uppercase;
+      border: 1px solid #fff;
+      padding: 12px 24px;
+      box-shadow: 0 0 10px #fff;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1.02); }
+    }
+
+    /* 2. BACKGROUND MATRIX EFFECT */
     #matrix {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -50,20 +84,20 @@
       opacity: 0.15;
     }
 
-    /* Khung Profile Glassmorphism Trắng Đen */
+    /* 3. CORE PROFILE CARD */
     .card {
       position: relative;
       z-index: 2;
-      width: 380px;
+      width: 360px;
       background: rgba(0, 0, 0, 0.85);
       border: 2px solid var(--main-color);
-      box-shadow: 0 0 15px var(--glow-color);
+      box-shadow: 0 0 20px var(--glow-color);
       padding: 30px 20px;
       text-align: center;
       animation: card-flicker 0.15s infinite alternate;
+      transition: border 0.5s ease, box-shadow 0.5s ease;
     }
 
-    /* Animation Card Giật nhẹ theo beat */
     @keyframes card-flicker {
       0% { transform: translate(0, 0); }
       98% { transform: translate(0, 0); }
@@ -71,11 +105,11 @@
       100% { transform: translate(1px, -1px); }
     }
 
-    /* Avatar xé hình Bad Apple */
+    /* Avatar Discord */
     .avatar-container {
       position: relative;
-      width: 100px;
-      height: 100px;
+      width: 90px;
+      height: 90px;
       margin: 0 auto 15px;
     }
 
@@ -84,13 +118,13 @@
       height: 100%;
       border-radius: 50%;
       filter: grayscale(100%) contrast(200%);
-      border: 2px solid #fff;
+      border: 2px solid var(--main-color);
       box-shadow: 0 0 10px var(--glow-color);
     }
 
     /* Text Glitch Effect */
     .glitch {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: bold;
       position: relative;
       text-transform: uppercase;
@@ -141,30 +175,33 @@
       margin-bottom: 15px;
     }
 
-    /* Player Nhạc */
+    /* Music Player */
     .player {
       border: 1px dashed var(--main-color);
-      padding: 15px;
+      padding: 12px;
       margin: 20px 0;
       background: #000;
     }
 
     .song-info {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .controls {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 15px;
     }
 
     .btn {
       background: none;
       border: 1px solid var(--main-color);
       color: var(--main-color);
-      padding: 5px 15px;
+      padding: 5px 12px;
       cursor: pointer;
       font-family: var(--font-mono);
       transition: 0.1s;
@@ -176,7 +213,7 @@
       box-shadow: 0 0 10px var(--glow-color);
     }
 
-    /* Social Links Grid */
+    /* Social Buttons */
     .socials {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -201,6 +238,12 @@
 </head>
 <body>
 
+  <!-- Màn hình chờ Bấm để vào -->
+  <div id="overlay">
+    <div class="enter-text">[ CLICK TO ENTER ]</div>
+  </div>
+
+  <!-- Hiệu ứng Hacker Rain Background -->
   <canvas id="matrix"></canvas>
 
   <div class="card">
@@ -211,18 +254,18 @@
     <div class="glitch" data-text="SYSTEM_FAILURE">SYSTEM_FAILURE</div>
     <div class="user-tag">@admin_root_access</div>
 
+    <!-- Trình chỉnh nhạc -->
     <div class="player">
-      <div class="song-info">
-        > <span id="title">BAD_APPLE.MP3</span>
-      </div>
+      <div class="song-info">> <span id="title">BAD_APPLE.MP3</span></div>
       <div class="controls">
         <button class="btn" id="prev"><<</button>
         <button class="btn" id="play">[PLAY]</button>
         <button class="btn" id="next">>></button>
       </div>
-      <audio id="audio" src=""></audio>
+      <audio id="audio" loop></audio>
     </div>
 
+    <!-- Các Nút Mạng Xã Hội -->
     <div class="socials">
       <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
       <a href="https://facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook"></i></a>
@@ -234,10 +277,22 @@
   </div>
 
   <script>
-    // 1. Matrix Code Rain Effect Background
+    // 1. CHỨC NĂNG CLICK-TO-ENTER & AUTO-PLAY
+    const overlay = document.getElementById('overlay');
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      // Bắt đầu phát nhạc ngay khi người dùng click
+      audio.play().then(() => {
+        playBtn.innerText = "[PAUSE]";
+      }).catch(e => console.log(e));
+    });
+
+    // 2. MATRIX RAIN EFFECT
     const canvas = document.getElementById('matrix');
     const ctx = canvas.getContext('2d');
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -263,7 +318,7 @@
     }
     setInterval(drawMatrix, 33);
 
-    // 2. Music Player & Changing Glowing Mood
+    // 3. MUSIC PLAYER & DYNAMIC GLOWING MOOD
     const songs = [
       { title: "BAD_APPLE_REMIX.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", color: "#ffffff" },
       { title: "CYBERPUNK_BEAT.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", color: "#00ff66" },
@@ -271,8 +326,6 @@
     ];
 
     let songIndex = 0;
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('play');
     const prevBtn = document.getElementById('prev');
     const nextBtn = document.getElementById('next');
     const title = document.getElementById('title');
@@ -280,12 +333,12 @@
     function loadSong(song) {
       title.innerText = song.title;
       audio.src = song.src;
-      // Đổi tông màu Glow khi đổi nhạc
+      // Cập nhật tông màu Glowing theo nhạc
       document.documentElement.style.setProperty('--glow-color', song.color);
       document.documentElement.style.setProperty('--main-color', song.color);
     }
 
-    function togglePlay() {
+    playBtn.addEventListener('click', () => {
       if (audio.paused) {
         audio.play();
         playBtn.innerText = "[PAUSE]";
@@ -293,15 +346,15 @@
         audio.pause();
         playBtn.innerText = "[PLAY]";
       }
-    }
+    });
 
-    playBtn.addEventListener('click', togglePlay);
     prevBtn.addEventListener('click', () => {
       songIndex = (songIndex - 1 + songs.length) % songs.length;
       loadSong(songs[songIndex]);
       audio.play();
       playBtn.innerText = "[PAUSE]";
     });
+
     nextBtn.addEventListener('click', () => {
       songIndex = (songIndex + 1) % songs.length;
       loadSong(songs[songIndex]);
