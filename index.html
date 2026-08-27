@@ -3,28 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bad Apple // Discord Profile</title>
+  <title>ItsVenuz // Profile</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root {
-      --bg-color: #000000;
-      --main-color: #ffffff;
-      --glow-color: #ffffff;
-      --font-mono: 'Courier New', Courier, monospace;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      /* Animation chuyển màu cực nhanh để giật theo beat */
-      transition: filter 0.05s ease;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--main-color);
-      font-family: var(--font-mono);
+      background: #09090b;
+      color: #fff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -33,32 +24,27 @@
       position: relative;
     }
 
-    /* Hiệu ứng Lật ngược màu toàn bộ Web theo Beat */
-    body.beat-invert {
-      filter: invert(100%);
-    }
-
-    /* Scanline CRT TV */
-    body::before {
-      content: "";
+    /* Ambient Background Glow */
+    .bg-glow {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 6px 100%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(120, 119, 198, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
       pointer-events: none;
-      z-index: 10;
+      z-index: 1;
     }
 
-    /* Overlay Click to Enter */
+    /* Click to Enter Overlay */
     #overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background-color: #000;
+      background-color: #050505;
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 99;
+      z-index: 999;
       cursor: pointer;
       transition: opacity 0.8s ease, visibility 0.8s ease;
     }
@@ -68,14 +54,13 @@
       visibility: hidden;
     }
 
-    .enter-text {
-      font-size: 1.2rem;
-      letter-spacing: 3px;
-      animation: pulse 1.5s infinite alternate;
+    .enter-btn {
+      font-size: 0.95rem;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      border: 1px solid #fff;
-      padding: 12px 24px;
-      box-shadow: 0 0 10px #fff;
+      color: rgba(255, 255, 255, 0.7);
+      animation: pulse 2s infinite alternate;
+      user-select: none;
     }
 
     @keyframes pulse {
@@ -83,286 +68,215 @@
       100% { opacity: 1; transform: scale(1.02); }
     }
 
-    /* Background Matrix */
-    #matrix {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 1;
-      opacity: 0.15;
-    }
-
     /* Profile Card */
     .card {
       position: relative;
       z-index: 2;
-      width: 360px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid var(--main-color);
-      box-shadow: 0 0 20px var(--glow-color);
-      padding: 30px 20px;
+      width: 380px;
+      background: rgba(18, 18, 22, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 32px 24px 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
       text-align: center;
-      animation: card-flicker 0.15s infinite alternate;
     }
 
-    @keyframes card-flicker {
-      0% { transform: translate(0, 0); }
-      98% { transform: translate(0, 0); }
-      99% { transform: translate(-2px, 1px); }
-      100% { transform: translate(1px, -1px); }
-    }
-
-    .avatar-container {
+    /* Avatar & Live Status */
+    .avatar-wrapper {
       position: relative;
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 15px;
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 16px;
     }
 
     .avatar {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      filter: grayscale(100%) contrast(200%);
-      border: 2px solid var(--main-color);
-      box-shadow: 0 0 10px var(--glow-color);
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    /* Glitch Text */
-    .glitch {
-      font-size: 1.5rem;
-      font-weight: bold;
-      position: relative;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--main-color);
-      text-shadow: 0 0 5px var(--glow-color);
-    }
-
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
+    .status-dot {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      clip: rect(0, 0, 0, 0);
+      bottom: 4px; right: 4px;
+      width: 18px; height: 18px;
+      background-color: #80848e;
+      border: 3.5px solid #121216;
+      border-radius: 50%;
     }
 
-    .glitch::before {
-      left: -2px;
-      text-shadow: 2px 0 #ff0055;
-      animation: glitch-anim 2s infinite linear alternate-reverse;
+    .status-dot.online { background-color: #23a55a; }
+    .status-dot.idle { background-color: #f0b232; }
+    .status-dot.dnd { background-color: #f23f43; }
+    .status-dot.offline { background-color: #80848e; }
+
+    /* User Info */
+    .display-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
     }
 
-    .glitch::after {
-      left: 2px;
-      text-shadow: -2px 0 #00f2fe;
-      animation: glitch-anim2 3s infinite linear alternate-reverse;
+    .username {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-top: 2px;
+      margin-bottom: 20px;
     }
 
-    @keyframes glitch-anim {
-      0% { clip: rect(10px, 9999px, 30px, 0); }
-      20% { clip: rect(40px, 9999px, 10px, 0); }
-      40% { clip: rect(25px, 9999px, 50px, 0); }
-      60% { clip: rect(70px, 9999px, 20px, 0); }
-      80% { clip: rect(15px, 9999px, 80px, 0); }
-      100% { clip: rect(50px, 9999px, 5px, 0); }
+    /* Music Player */
+    .music-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
-    @keyframes glitch-anim2 {
-      0% { clip: rect(60px, 9999px, 10px, 0); }
-      25% { clip: rect(15px, 9999px, 70px, 0); }
-      50% { clip: rect(35px, 9999px, 30px, 0); }
-      75% { clip: rect(80px, 9999px, 5px, 0); }
-      100% { clip: rect(5px, 9999px, 40px, 0); }
+    .music-icon {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.7);
     }
 
-    .user-tag {
+    .music-info {
+      flex: 1;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .song-title {
       font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 15px;
-    }
-
-    /* Player Nhạc */
-    .player {
-      border: 1px dashed var(--main-color);
-      padding: 12px;
-      margin: 20px 0;
-      background: #000;
-    }
-
-    .song-info {
-      font-size: 0.75rem;
-      margin-bottom: 10px;
+      font-weight: 600;
+      color: #fff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
+    .song-artist {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.4);
     }
 
-    .btn {
-      background: none;
-      border: 1px solid var(--main-color);
-      color: var(--main-color);
-      padding: 5px 12px;
-      cursor: pointer;
-      font-family: var(--font-mono);
-    }
-
-    .btn:hover {
-      background: var(--main-color);
-      color: #000;
-    }
-
-    /* Nút Social Links */
-    .socials {
+    /* Social Buttons Grid */
+    .social-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
     .social-btn {
-      border: 1px solid var(--main-color);
-      color: var(--main-color);
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
       text-decoration: none;
-      font-size: 1.2rem;
+      transition: all 0.25s ease;
     }
 
     .social-btn:hover {
-      background: var(--main-color);
-      color: #000;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
 
-  <!-- Overlay -->
+  <!-- Overlay Screen -->
   <div id="overlay">
-    <div class="enter-text">[ CLICK TO ENTER ]</div>
+    <div class="enter-btn">[ click to enter ]</div>
   </div>
 
-  <canvas id="matrix"></canvas>
+  <div class="bg-glow"></div>
 
   <div class="card">
-    <div class="avatar-container">
-      <img src="https://i.imgur.com/8Km9tLL.png" alt="Avatar" class="avatar">
+    <div class="avatar-wrapper">
+      <img id="discord-avatar" src="https://i.imgur.com/8Km9tLL.png" alt="Avatar" class="avatar">
+      <div id="discord-status" class="status-dot"></div>
     </div>
 
-    <div class="glitch" data-text="SYSTEM_FAILURE">SYSTEM_FAILURE</div>
-    <div class="user-tag">@admin_root_access</div>
+    <div id="discord-name" class="display-name">ItsVenuz</div>
+    <div id="discord-tag" class="username">@itsvenuz</div>
 
-    <!-- Music Player -->
-    <div class="player">
-      <div class="song-info">> Anybody can find love [Glitch Cat Remix]</div>
-      <div class="controls">
-        <button class="btn" id="play">[PAUSE]</button>
+    <!-- Music Player Block -->
+    <div class="music-box">
+      <i class="fas fa-music music-icon"></i>
+      <div class="music-info">
+        <div class="song-title">Anybody can find love (except you.)</div>
+        <div class="song-artist">Glitch Cat Remix</div>
       </div>
-      <!-- File audio phát trực tiếp để phân tích Beat -->
-      <audio id="audio" crossorigin="anonymous" loop src="https://files.catbox.moe/k854b4.mp3"></audio>
     </div>
 
-    <!-- Social Links -->
-    <div class="socials">
-      <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
+    <!-- Social Buttons -->
+    <div class="social-grid">
       <a href="https://facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook"></i></a>
       <a href="https://zalo.me" target="_blank" class="social-btn"><i class="fas fa-comment"></i></a>
       <a href="https://discord.com" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
       <a href="https://t.me" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a>
       <a href="https://github.com" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
+      <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
     </div>
   </div>
 
+  <audio id="bg-audio" loop src="music.mp3"></audio>
+
   <script>
+    // ID Discord của bạn lấy trực tiếp từ Lanyard:
+    const DISCORD_ID = "993081831811997706";
+
     const overlay = document.getElementById('overlay');
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('play');
+    const audio = document.getElementById('bg-audio');
 
-    let audioCtx, analyser, dataArray;
-
-    // 1. CLICK TO ENTER & KÍCH HOẠT BEAT DETECTOR
     overlay.addEventListener('click', () => {
       overlay.classList.add('hidden');
-      
-      // Khởi tạo Web Audio API để đo nhịp Bass/Beat
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioCtx.createAnalyser();
-        const source = audioCtx.createMediaElementSource(audio);
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        
-        analyser.fftSize = 64; // Chia dải tần số
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-      }
-
-      audioCtx.resume();
-      audio.play();
-      detectBeat();
+      audio.play().catch(err => console.log(err));
     });
 
-    // 2. PHÂN TÍCH NHỊP BASS & CONTRAST FLIP (INVERT)
-    function detectBeat() {
-      requestAnimationFrame(detectBeat);
-      if (audio.paused) return;
+    // LẤY DỮ LIỆU TỰ ĐỘNG TỪ LANYARD API
+    async function fetchDiscordProfile() {
+      try {
+        const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        const data = await response.json();
 
-      analyser.getByteFrequencyData(dataArray);
-      
-      // Lấy năng lượng ở dải âm trầm (Bass / Kick Beat)
-      let bassSum = 0;
-      for (let i = 0; i < 4; i++) {
-        bassSum += dataArray[i];
-      }
-      let bassAverage = bassSum / 4;
+        if (data.success) {
+          const user = data.data.discord_user;
+          const status = data.data.discord_status;
 
-      // Nếu tiếng Beat nổ mạnh (vượt ngưỡng 205), lật ngược màu web
-      if (bassAverage > 205) {
-        document.body.classList.add('beat-invert');
-      } else {
-        document.body.classList.remove('beat-invert');
-      }
-    }
+          // Cập nhật Name & Username
+          document.getElementById('discord-name').innerText = user.global_name || user.username;
+          document.getElementById('discord-tag').innerText = `@${user.username}`;
 
-    // Nút Play/Pause
-    playBtn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play();
-        playBtn.innerText = "[PAUSE]";
-      } else {
-        audio.pause();
-        playBtn.innerText = "[PLAY]";
-      }
-    });
+          // Cập nhật Avatar (Tự nhận diện GIF hoặc PNG)
+          if (user.avatar) {
+            const avatarExtension = user.avatar.startsWith("a_") ? "gif" : "png";
+            document.getElementById('discord-avatar').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${avatarExtension}?size=256`;
+          }
 
-    // 3. EFFECT HACKER MATRIX BACKGROUND
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = "01010101GLITCHHACKERROR";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+          // Cập nhật Status Dot
+          const statusDot = document.getElementById('discord-status');
+          statusDot.className = `status-dot ${status}`;
         }
-        drops[i]++;
+      } catch (err) {
+        console.error("Lỗi khi kết nối Lanyard API:", err);
       }
     }
-    setInterval(drawMatrix, 33);
+
+    fetchDiscordProfile();
   </script>
 </body>
 </html>
