@@ -3,366 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bad Apple // Discord Profile</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Beat Sync Invert - Glitch Cat Remix</title>
   <style>
     :root {
-      --bg-color: #000000;
-      --main-color: #ffffff;
-      --glow-color: #ffffff;
-      --font-mono: 'Courier New', Courier, monospace;
+      --bg-color: #0d0d0d;
+      --text-color: #ffffff;
+      --accent-color: #ff2a6d;
     }
 
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      transition: background-color 0.05s ease, filter 0.05s ease;
     }
 
     body {
+      margin: 0;
+      padding: 0;
       background-color: var(--bg-color);
-      color: var(--main-color);
-      font-family: var(--font-mono);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
-      position: relative;
     }
 
-    /* Hiệu ứng Màn hình CRT TV Scanline */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), 
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-      background-size: 100% 3px, 6px 100%;
-      pointer-events: none;
-      z-index: 10;
+    /* Hiệu ứng lật ngược màu sắc toàn trang */
+    body.inverted {
+      filter: invert(100%) hue-rotate(180deg);
     }
 
-    /* 1. MÀN HÌNH MỜ ĐẦU (CLICK TO ENTER) */
-    #overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-color: #000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 99;
-      cursor: pointer;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
-    }
-
-    #overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .enter-text {
-      font-size: 1.2rem;
-      letter-spacing: 3px;
-      animation: pulse 1.5s infinite alternate;
-      text-transform: uppercase;
-      border: 1px solid #fff;
-      padding: 12px 24px;
-      box-shadow: 0 0 10px #fff;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.3; transform: scale(0.98); }
-      100% { opacity: 1; transform: scale(1.02); }
-    }
-
-    /* 2. BACKGROUND MATRIX EFFECT */
-    #matrix {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: 1;
-      opacity: 0.15;
-    }
-
-    /* 3. CORE PROFILE CARD */
-    .card {
-      position: relative;
-      z-index: 2;
-      width: 360px;
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid var(--main-color);
-      box-shadow: 0 0 20px var(--glow-color);
-      padding: 30px 20px;
+    .container {
       text-align: center;
-      animation: card-flicker 0.15s infinite alternate;
-      transition: border 0.5s ease, box-shadow 0.5s ease;
+      z-index: 10;
+      padding: 20px;
     }
 
-    @keyframes card-flicker {
-      0% { transform: translate(0, 0); }
-      98% { transform: translate(0, 0); }
-      99% { transform: translate(-2px, 1px); }
-      100% { transform: translate(1px, -1px); }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
     }
 
-    /* Avatar Discord */
-    .avatar-container {
+    p {
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    .player-wrapper {
       position: relative;
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 15px;
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 16 / 9;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #333;
     }
 
-    .avatar {
+    #youtube-player {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
-      filter: grayscale(100%) contrast(200%);
-      border: 2px solid var(--main-color);
-      box-shadow: 0 0 10px var(--glow-color);
-    }
-
-    /* Text Glitch Effect */
-    .glitch {
-      font-size: 1.6rem;
-      font-weight: bold;
-      position: relative;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--main-color);
-      text-shadow: 0 0 5px var(--glow-color);
-    }
-
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      clip: rect(0, 0, 0, 0);
-    }
-
-    .glitch::before {
-      left: -2px;
-      text-shadow: 2px 0 #ff0055;
-      animation: glitch-anim 2s infinite linear alternate-reverse;
-    }
-
-    .glitch::after {
-      left: 2px;
-      text-shadow: -2px 0 #00f2fe;
-      animation: glitch-anim2 3s infinite linear alternate-reverse;
-    }
-
-    @keyframes glitch-anim {
-      0% { clip: rect(10px, 9999px, 30px, 0); }
-      20% { clip: rect(40px, 9999px, 10px, 0); }
-      40% { clip: rect(25px, 9999px, 50px, 0); }
-      60% { clip: rect(70px, 9999px, 20px, 0); }
-      80% { clip: rect(15px, 9999px, 80px, 0); }
-      100% { clip: rect(50px, 9999px, 5px, 0); }
-    }
-
-    @keyframes glitch-anim2 {
-      0% { clip: rect(60px, 9999px, 10px, 0); }
-      25% { clip: rect(15px, 9999px, 70px, 0); }
-      50% { clip: rect(35px, 9999px, 30px, 0); }
-      75% { clip: rect(80px, 9999px, 5px, 0); }
-      100% { clip: rect(5px, 9999px, 40px, 0); }
-    }
-
-    .user-tag {
-      font-size: 0.85rem;
-      color: #888;
-      margin-bottom: 15px;
-    }
-
-    /* Music Player */
-    .player {
-      border: 1px dashed var(--main-color);
-      padding: 12px;
-      margin: 20px 0;
-      background: #000;
-    }
-
-    .song-info {
-      font-size: 0.85rem;
-      margin-bottom: 10px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
+      margin-top: 20px;
     }
 
-    .btn {
-      background: none;
-      border: 1px solid var(--main-color);
-      color: var(--main-color);
-      padding: 5px 12px;
+    button {
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
       cursor: pointer;
-      font-family: var(--font-mono);
-      transition: 0.1s;
+      box-shadow: 0 4px 15px rgba(255, 42, 109, 0.4);
     }
 
-    .btn:hover {
-      background: var(--main-color);
-      color: #000;
-      box-shadow: 0 0 10px var(--glow-color);
-    }
-
-    /* Social Buttons */
-    .socials {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .social-btn {
-      border: 1px solid var(--main-color);
-      color: var(--main-color);
-      padding: 10px;
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: 0.2s;
-    }
-
-    .social-btn:hover {
-      background: var(--main-color);
-      color: #000;
-      box-shadow: 0 0 10px var(--glow-color);
+    button:hover {
+      opacity: 0.9;
     }
   </style>
 </head>
 <body>
 
-  <!-- Màn hình chờ Bấm để vào -->
-  <div id="overlay">
-    <div class="enter-text">[ CLICK TO ENTER ]</div>
-  </div>
+  <div class="container">
+    <h1>Anybody Can Find Love (Except You.)</h1>
+    <p>[Glitch Cat Remix] - Visualizer Beat Sync</p>
 
-  <!-- Hiệu ứng Hacker Rain Background -->
-  <canvas id="matrix"></canvas>
-
-  <div class="card">
-    <div class="avatar-container">
-      <img src="https://i.imgur.com/8Km9tLL.png" alt="Avatar" class="avatar">
+    <div class="player-wrapper">
+      <div id="youtube-player"></div>
     </div>
 
-    <div class="glitch" data-text="SYSTEM_FAILURE">SYSTEM_FAILURE</div>
-    <div class="user-tag">@admin_root_access</div>
-
-    <!-- Trình chỉnh nhạc -->
-    <div class="player">
-      <div class="song-info">> <span id="title">BAD_APPLE.MP3</span></div>
-      <div class="controls">
-        <button class="btn" id="prev"><<</button>
-        <button class="btn" id="play">[PLAY]</button>
-        <button class="btn" id="next">>></button>
-      </div>
-      <audio id="audio" loop></audio>
-    </div>
-
-    <!-- Các Nút Mạng Xã Hội -->
-    <div class="socials">
-      <a href="https://youtube.com" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a>
-      <a href="https://facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook"></i></a>
-      <a href="https://zalo.me" target="_blank" class="social-btn"><i class="fas fa-comment"></i></a>
-      <a href="https://discord.com" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a>
-      <a href="https://t.me" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a>
-      <a href="https://github.com" target="_blank" class="social-btn"><i class="fab fa-github"></i></a>
+    <div class="controls">
+      <button id="start-btn">Kích hoạt Audio Visualizer & Phát</button>
     </div>
   </div>
 
   <script>
-    // 1. CHỨC NĂNG CLICK-TO-ENTER & AUTO-PLAY
-    const overlay = document.getElementById('overlay');
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('play');
+    // Load YouTube API
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    overlay.addEventListener('click', () => {
-      overlay.classList.add('hidden');
-      // Bắt đầu phát nhạc ngay khi người dùng click
-      audio.play().then(() => {
-        playBtn.innerText = "[PAUSE]";
-      }).catch(e => console.log(e));
-    });
+    var player;
+    var audioCtx, analyser, dataArray;
+    var isPlaying = false;
 
-    // 2. MATRIX RAIN EFFECT
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const chars = "01010101BADAPPLEGLITCHHACKERROR";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = Array(Math.floor(columns)).fill(1);
-
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = fontSize + "px monospace";
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars.charAt(Math.floor(Math.random() * chars.length));
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-player', {
+        videoId: 'sG4ZMsi6djs',
+        playerVars: {
+          'playsinline': 1,
+          'controls': 1
+        },
+        events: {
+          'onStateChange': onPlayerStateChange
         }
-        drops[i]++;
-      }
-    }
-    setInterval(drawMatrix, 33);
-
-    // 3. MUSIC PLAYER & DYNAMIC GLOWING MOOD
-    const songs = [
-      { title: "BAD_APPLE_REMIX.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", color: "#ffffff" },
-      { title: "CYBERPUNK_BEAT.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", color: "#00ff66" },
-      { title: "HACKER_SYSTEM.MP3", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", color: "#ff0055" }
-    ];
-
-    let songIndex = 0;
-    const prevBtn = document.getElementById('prev');
-    const nextBtn = document.getElementById('next');
-    const title = document.getElementById('title');
-
-    function loadSong(song) {
-      title.innerText = song.title;
-      audio.src = song.src;
-      // Cập nhật tông màu Glowing theo nhạc
-      document.documentElement.style.setProperty('--glow-color', song.color);
-      document.documentElement.style.setProperty('--main-color', song.color);
+      });
     }
 
-    playBtn.addEventListener('click', () => {
-      if (audio.paused) {
-        audio.play();
-        playBtn.innerText = "[PAUSE]";
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        isPlaying = true;
+        detectBeatSimulated(); // Chạy bộ giả lập nhịp nếu API Web Audio bị giới hạn bởi Iframe
       } else {
-        audio.pause();
-        playBtn.innerText = "[PLAY]";
+        isPlaying = false;
+      }
+    }
+
+    // Thiết lập tính năng lật màu dựa trên nhịp điệu (BPM / Frequency pulse)
+    var lastFlip = 0;
+    var bpm = 128; // Tốc độ BPM ước tính của bài hát
+    var beatInterval = (60 / bpm) * 1000;
+
+    function detectBeatSimulated() {
+      if (!isPlaying) return;
+
+      var now = Date.now();
+      if (now - lastFlip > beatInterval / 2) {
+        document.body.classList.toggle('inverted');
+        lastFlip = now;
+      }
+
+      requestAnimationFrame(detectBeatSimulated);
+    }
+
+    document.getElementById('start-btn').addEventListener('click', function() {
+      if (player && player.playVideo) {
+        player.playVideo();
       }
     });
-
-    prevBtn.addEventListener('click', () => {
-      songIndex = (songIndex - 1 + songs.length) % songs.length;
-      loadSong(songs[songIndex]);
-      audio.play();
-      playBtn.innerText = "[PAUSE]";
-    });
-
-    nextBtn.addEventListener('click', () => {
-      songIndex = (songIndex + 1) % songs.length;
-      loadSong(songs[songIndex]);
-      audio.play();
-      playBtn.innerText = "[PAUSE]";
-    });
-
-    loadSong(songs[songIndex]);
   </script>
 </body>
 </html>
